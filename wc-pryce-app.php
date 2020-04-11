@@ -46,7 +46,6 @@ add_filter('woocommerce_general_settings', 'add_token_configuration_start_settin
 
 function wc_pryce_app_integration($price, $product)
 {
-
     $requestToken = get_option('wc_pryce_app_token', 1);
     if (!$requestToken) {
         error_log('[pryce.app] token not found.');
@@ -71,26 +70,24 @@ function wc_pryce_app_integration($price, $product)
     $encodedRequest = json_encode($requestContent);
 
     $endpoint = "https://pryce.app/api/quotation/";
-    $headers = [
-        "Authorization" => "Token " . $requestToken,
-        "Content-Type" => "application/json",
-        "Content-Length" => strlen($encodedRequest)
-    ];
-    $response = Requests::post(
-        $endpoint,
-        $headers,
-        $encodedRequest
-    );
+    $response = wp_remote_post($endpoint, [
+        'body' => $encodedRequest,
+        'headers' => [
+            'Authorization' => 'Token ' . $requestToken,
+            'Content-Type' => 'application/json',
+            'Content-Length' => strlen($encodedRequest)
+        ]
+    ]);
 
-    if ($response->status_code !== 200) {
+    if ($response["http_response"]->get_status() !== 200) {
         error_log(
-            "[pryce.app] could not get price error: " . json_encode($response) . " request: " . $encodedRequest
+            "[pryce.app] could not get price, error: " . json_encode($response) . " request: " . $encodedRequest
         );
         return $price;
     }
 
-    $requestBody = json_decode($response->body);
+    $responseContent = json_decode($response['body']);
 
-    return $requestBody[0]->selling_price;
+    return $responseContent[0]->selling_price;
 }
 add_filter('woocommerce_product_get_price', 'wc_pryce_app_integration', 10, 2);
