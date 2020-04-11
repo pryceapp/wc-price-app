@@ -64,7 +64,7 @@ function wc_pryce_app_integration($price, $product)
 
     $encodedRequest = json_encode($requestContent);
 
-    $endpoint = "https://sheltered-sea-90487.herokuapp.com/api/quotation/";
+    $endpoint = "https://pryce.app/api/quotation/";
     $headers = [
         "Authorization" => "Token b4e58140b61cf086c82153f6c371668684f6ca7a",
         "Content-Type" => "application/json",
