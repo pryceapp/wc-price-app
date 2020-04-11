@@ -2,11 +2,11 @@
 /*
 Plugin Name: Pryce.app
 Plugin URI: https://github.com/pryceapp/wc-price-app
-Description: Pryce.app plugin integration
+Description: Pryce.app integration
 Version: 0.1
 Author: Pryce.app
-Author URI: https://github.com/pryceapp
-License: GPL
+Author URI: https://pryce.app/
+License: GPLv2 or later
 */
 
 if (!defined('ABSPATH')) {
