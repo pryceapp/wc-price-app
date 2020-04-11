@@ -33,7 +33,7 @@ function add_token_configuration_start_setting($settings)
                 'css'      => 'min-width:300px;',
                 'std'      => '',  // WC < 2.0
                 'default'  => '',  // WC >= 2.0
-                'desc'     => __('Exemplo: b4e58140b61cf086c82153f6c371668684f6ca7a'),
+                'desc'     => __('Exemplo: b4e58140b61cf086c82153f6c371668684f6ca71'),
             ];
         }
 
@@ -46,6 +46,12 @@ add_filter('woocommerce_general_settings', 'add_token_configuration_start_settin
 
 function wc_pryce_app_integration($price, $product)
 {
+
+    $requestToken = get_option('wc_pryce_app_token', 1);
+    if (!$requestToken) {
+        error_log('[pryce.app] token not found.');
+        return $price;
+    }
 
     $term = get_term_by('id', $product->get_category_ids()[0], 'product_cat');
 
@@ -66,7 +72,7 @@ function wc_pryce_app_integration($price, $product)
 
     $endpoint = "https://pryce.app/api/quotation/";
     $headers = [
-        "Authorization" => "Token b4e58140b61cf086c82153f6c371668684f6ca7a",
+        "Authorization" => "Token " . $requestToken,
         "Content-Type" => "application/json",
         "Content-Length" => strlen($encodedRequest)
     ];
