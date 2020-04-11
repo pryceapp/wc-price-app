@@ -84,7 +84,7 @@ function wc_pryce_app_integration($price, $product)
 
     if ($response->status_code !== 200) {
         error_log(
-            "could not get price on pryce error: " . json_encode($response) . " request: " . $encoded_request
+            "[pryce.app] could not get price error: " . json_encode($response) . " request: " . $encodedRequest
         );
         return $price;
     }
