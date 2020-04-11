@@ -55,9 +55,9 @@ function wc_pryce_app_integration($price, $product)
                 "sku" => $product->get_sku(),
                 "price" => $price,
                 "category" => $term->name,
-                "brand" => "teste",
-                "zip_code" => "07400000",
-                "affiliate" => "google"
+                "brand" => "",
+                "zip_code" => "",
+                "affiliate" => ""
             ]
         ]
     ];
