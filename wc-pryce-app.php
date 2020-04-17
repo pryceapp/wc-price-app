@@ -52,17 +52,26 @@ function wc_pryce_app_integration($price, $product)
         return $price;
     }
 
-    $term = get_term_by('id', $product->get_category_ids()[0], 'product_cat');
+    // For "related products" section that doesn't show the price
+    if (empty($price)) {
+        return $price;
+    }
+
+    $productCategories = get_terms([
+        'taxonomy'   => 'product_cat',
+        'include' => wp_list_pluck($product->get_category_ids(), 0)
+    ]);
+
+    $categories = wp_list_pluck($productCategories, 'name');
+    $affiliate = get_request_parameter('utm_source');
 
     $requestContent = [
         "data" => [
             [
                 "sku" => $product->get_sku(),
                 "price" => $price,
-                "category" => $term->name,
-                "brand" => "",
-                "zip_code" => "",
-                "affiliate" => ""
+                "categories" => array_values($categories),
+                "affiliate" => $affiliate
             ]
         ]
     ];
@@ -79,10 +88,7 @@ function wc_pryce_app_integration($price, $product)
         ]
     ]);
 
-    if ($response["http_response"]->get_status() !== 200) {
-        error_log(
-            "[pryce.app] could not get price, error: " . json_encode($response) . " request: " . $encodedRequest
-        );
+    if (has_response_errors($response, $encodedRequest)) {
         return $price;
     }
 
@@ -91,3 +97,28 @@ function wc_pryce_app_integration($price, $product)
     return $responseContent[0]->selling_price;
 }
 add_filter('woocommerce_product_get_price', 'wc_pryce_app_integration', 10, 2);
+
+
+function get_request_parameter($key, $default = '')
+{
+    if (!isset($_REQUEST[$key]) || empty($_REQUEST[$key])) {
+        return $default;
+    }
+
+    return strip_tags((string) wp_unslash($_REQUEST[$key]));
+}
+
+function has_response_errors($response, $encodedRequest)
+{
+    $errorMessage = "[pryce.app] could not get price, error: " . json_encode($response['body']) . " request: " . $encodedRequest;
+    if (is_wp_error($response) || !is_array($response)) {
+        error_log($errorMessage);
+        return true;
+    }
+    if ($response["http_response"]->get_status() !== 200) {
+        error_log($errorMessage);
+        return true;
+    }
+
+    return false;
+}
