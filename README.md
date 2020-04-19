@@ -8,3 +8,11 @@ Este é um plugin que posibilitara que você conecte sua loja woocommerce com a 
 1. Faça o download deste repositório [neste link](https://github.com/pryceapp/wc-price-app/archive/master.zip)
 2. Extraia o arquivo `.zip` no seu computador
 3. Coloque a pasta extraida em `wp-content/plugins/` em sua instalcão do wordpress
+
+
+## Desenvolvimento
+
+- [x] Desconto por categoria
+- [ ] Desconto por afiliados
+- [ ] Desconto por marca/tag
+- [ ] Desconto por CEP
