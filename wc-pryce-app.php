@@ -13,6 +13,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+require 'helpers.php';
+
+const PRYCE_URL = "https://pryce.app/api/quotation/";
+
 function add_token_configuration_start_setting($settings)
 {
 
@@ -78,8 +82,7 @@ function wc_pryce_app_integration($price, $product)
 
     $encodedRequest = json_encode($requestContent);
 
-    $endpoint = "https://pryce.app/api/quotation/";
-    $response = wp_remote_post($endpoint, [
+    $response = wp_remote_post(PRYCE_URL, [
         'body' => $encodedRequest,
         'headers' => [
             'Authorization' => 'Token ' . $requestToken,
@@ -98,27 +101,27 @@ function wc_pryce_app_integration($price, $product)
 }
 add_filter('woocommerce_product_get_price', 'wc_pryce_app_integration', 10, 2);
 
-
-function get_request_parameter($key, $default = '')
+function wc_pryce_app_adds_utm_source_to_add_to_cart_link($button, $product)
 {
-    if (!isset($_REQUEST[$key]) || empty($_REQUEST[$key])) {
-        return $default;
+    $utm_source = get_request_parameter('utm_source');
+    if (empty($utm_source)) {
+        return $button;
     }
-
-    return strip_tags((string) wp_unslash($_REQUEST[$key]));
+    $pattern = "/(?<=href=(\"|'))[^\"']+(?=(\"|'))/";
+    $matches = array();
+    preg_match($pattern, $button, $matches);
+    $newHref = $matches[0] . "&utm_source=" . $utm_source;
+    return preg_replace($pattern, $newHref, $button);
 }
+add_filter('woocommerce_loop_add_to_cart_link', 'wc_pryce_app_adds_utm_source_to_add_to_cart_link', 10, 2);
 
-function has_response_errors($response, $encodedRequest)
+function wc_pryce_app_product_link($buttonLink, $product)
 {
-    $errorMessage = "[pryce.app] could not get price, error: " . json_encode($response['body']) . " request: " . $encodedRequest;
-    if (is_wp_error($response) || !is_array($response)) {
-        error_log($errorMessage);
-        return true;
-    }
-    if ($response["http_response"]->get_status() !== 200) {
-        error_log($errorMessage);
-        return true;
+    $utm_source = get_request_parameter('utm_source');
+    if (empty($utm_source)) {
+        return $buttonLink;
     }
 
-    return false;
+    return $buttonLink . "&utm_source=" . $utm_source;
 }
+add_filter('woocommerce_loop_product_link', 'wc_pryce_app_product_link', 10, 2);
