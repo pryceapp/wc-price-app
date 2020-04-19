@@ -9,13 +9,11 @@ Author URI: https://pryce.app/
 License: GPLv2 or later
 */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+defined('ABSPATH') || exit;
 
 require 'helpers.php';
 
-const PRYCE_URL = "https://pryce.app/api/quotation/";
+const PRYCE_URL = "http://pryce.app/api/quotation/";
 
 function add_token_configuration_start_setting($settings)
 {
@@ -50,6 +48,12 @@ add_filter('woocommerce_general_settings', 'add_token_configuration_start_settin
 
 function wc_pryce_app_integration($price, $product)
 {
+
+    $cached = get_transient(get_transient_key($product->get_sku()));
+    if ($cached) {
+        return $cached;
+    }
+
     $requestToken = get_option('wc_pryce_app_token', 1);
     if (!$requestToken) {
         error_log('[pryce.app] token not found.');
@@ -96,8 +100,15 @@ function wc_pryce_app_integration($price, $product)
     }
 
     $responseContent = json_decode($response['body']);
+    $price = $responseContent[0]->selling_price;
 
-    return $responseContent[0]->selling_price;
+    set_transient(
+        get_transient_key($product->get_sku()),
+        $price,
+        5 * MINUTE_IN_SECONDS
+    );
+
+    return $price;
 }
 add_filter('woocommerce_product_get_price', 'wc_pryce_app_integration', 10, 2);
 
@@ -125,3 +136,15 @@ function wc_pryce_app_product_link($buttonLink, $product)
     return $buttonLink . "&utm_source=" . $utm_source;
 }
 add_filter('woocommerce_loop_product_link', 'wc_pryce_app_product_link', 10, 2);
+
+
+function wc_pryce_app_add_to_card_item($cart, $cartItemKey)
+{
+    $cacheKey = get_transient_key($cart['data']->get_sku());
+    $cached = get_transient($cacheKey);
+
+    $cart['data']->set_price($cached);
+
+    return $cart;
+}
+add_filter('woocommerce_add_cart_item', 'wc_pryce_app_add_to_card_item', 10, 2);

@@ -1,5 +1,16 @@
 <?php
 
+const TRANSIENT_KEY = "pryce_app_%s";
+
+function get_transient_key($productSku)
+{
+    return str_replace(
+        "%s",
+        $productSku,
+        TRANSIENT_KEY
+    );
+}
+
 function get_request_parameter($key, $default = '')
 {
     if (!isset($_REQUEST[$key]) || empty($_REQUEST[$key])) {
