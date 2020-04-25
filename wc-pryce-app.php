@@ -12,8 +12,8 @@ License: GPLv2 or later
 defined('ABSPATH') || exit;
 
 require 'helpers.php';
-
-const PRYCE_URL = "http://pryce.app/api/quotation/";
+require 'cookie.php';
+require 'client.php';
 
 function add_token_configuration_start_setting($settings)
 {
@@ -49,11 +49,6 @@ add_filter('woocommerce_general_settings', 'add_token_configuration_start_settin
 function wc_pryce_app_integration($price, $product)
 {
 
-    $cached = get_transient(get_transient_key($product->get_sku()));
-    if ($cached) {
-        return $cached;
-    }
-
     $requestToken = get_option('wc_pryce_app_token', 1);
     if (!$requestToken) {
         error_log('[pryce.app] token not found.');
@@ -65,86 +60,23 @@ function wc_pryce_app_integration($price, $product)
         return $price;
     }
 
-    $productCategories = get_terms([
-        'taxonomy'   => 'product_cat',
-        'include' => wp_list_pluck($product->get_category_ids(), 0)
-    ]);
+    $cookieHandler = GenericCookieHandler::getInstance();
+    $affiliate = $cookieHandler->get(GenericCookieHandler::DEFAULT_COOKIE_KEY);
 
-    $categories = wp_list_pluck($productCategories, 'name');
-    $affiliate = get_request_parameter('utm_source');
+    $pryceClient = new PryceClient($requestToken);
 
-    $requestContent = [
-        "data" => [
-            [
-                "sku" => $product->get_sku(),
-                "price" => $price,
-                "categories" => array_values($categories),
-                "affiliate" => $affiliate
-            ]
-        ]
-    ];
-
-    $encodedRequest = json_encode($requestContent);
-
-    $response = wp_remote_post(PRYCE_URL, [
-        'body' => $encodedRequest,
-        'headers' => [
-            'Authorization' => 'Token ' . $requestToken,
-            'Content-Type' => 'application/json',
-            'Content-Length' => strlen($encodedRequest)
-        ]
-    ]);
-
-    if (has_response_errors($response, $encodedRequest)) {
-        return $price;
-    }
-
-    $responseContent = json_decode($response['body']);
-    $price = $responseContent[0]->selling_price;
-
-    set_transient(
-        get_transient_key($product->get_sku()),
-        $price,
-        5 * MINUTE_IN_SECONDS
-    );
-
-    return $price;
+    return $pryceClient->get_quotation($price, $product, $affiliate);
 }
 add_filter('woocommerce_product_get_price', 'wc_pryce_app_integration', 10, 2);
 
-function wc_pryce_app_adds_utm_source_to_add_to_cart_link($button, $product)
-{
+add_action('init', function () {
     $utm_source = get_request_parameter('utm_source');
-    if (empty($utm_source)) {
-        return $button;
+    if (!empty($utm_source)) {
+        $cookieHandler = GenericCookieHandler::getInstance();
+        $cookieHandler->set(
+            GenericCookieHandler::DEFAULT_COOKIE_KEY,
+            $utm_source,
+            strtotime('+20 minutes')
+        );
     }
-    $pattern = "/(?<=href=(\"|'))[^\"']+(?=(\"|'))/";
-    $matches = array();
-    preg_match($pattern, $button, $matches);
-    $newHref = $matches[0] . "&utm_source=" . $utm_source;
-    return preg_replace($pattern, $newHref, $button);
-}
-add_filter('woocommerce_loop_add_to_cart_link', 'wc_pryce_app_adds_utm_source_to_add_to_cart_link', 10, 2);
-
-function wc_pryce_app_product_link($buttonLink, $product)
-{
-    $utm_source = get_request_parameter('utm_source');
-    if (empty($utm_source)) {
-        return $buttonLink;
-    }
-
-    return $buttonLink . "&utm_source=" . $utm_source;
-}
-add_filter('woocommerce_loop_product_link', 'wc_pryce_app_product_link', 10, 2);
-
-
-function wc_pryce_app_add_to_card_item($cart, $cartItemKey)
-{
-    $cacheKey = get_transient_key($cart['data']->get_sku());
-    $cached = get_transient($cacheKey);
-
-    $cart['data']->set_price($cached);
-
-    return $cart;
-}
-add_filter('woocommerce_add_cart_item', 'wc_pryce_app_add_to_card_item', 10, 2);
+});
