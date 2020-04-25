@@ -60,8 +60,7 @@ function wc_pryce_app_integration($price, $product)
         return $price;
     }
 
-    $cookieHandler = GenericCookieHandler::getInstance();
-    $affiliate = $cookieHandler->get(GenericCookieHandler::DEFAULT_COOKIE_KEY);
+    $affiliate = GenericCookieHandler::getInstance()->get();
 
     $pryceClient = new PryceClient($requestToken);
 
@@ -70,11 +69,12 @@ function wc_pryce_app_integration($price, $product)
 add_filter('woocommerce_product_get_price', 'wc_pryce_app_integration', 10, 2);
 
 add_action('init', function () {
-    $utm_source = get_request_parameter('utm_source');
+    $utm_source = get_request_parameter(
+        GenericCookieHandler::DEFAULT_AFFILIATE_IDENTIFIER
+    );
     if (!empty($utm_source)) {
         $cookieHandler = GenericCookieHandler::getInstance();
         $cookieHandler->set(
-            GenericCookieHandler::DEFAULT_COOKIE_KEY,
             $utm_source,
             strtotime('+20 minutes')
         );

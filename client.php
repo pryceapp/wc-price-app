@@ -2,7 +2,7 @@
 
 class PryceClient
 {
-    const ENDPOINT = "https://sheltered-sea-90487.herokuapp.com/api/quotation/";
+    const ENDPOINT = "https://pryce.app/api/quotation/";
     private static $requestToken;
 
     public function __construct($requestToken)
