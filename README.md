@@ -13,6 +13,6 @@ Este é um plugin que posibilitara que você conecte sua loja woocommerce com a 
 ## Desenvolvimento
 
 - [x] Desconto por categoria
-- [ ] Desconto por afiliados
+- [x] Desconto por afiliados
 - [ ] Desconto por marca/tag
 - [ ] Desconto por CEP
