@@ -20,7 +20,7 @@ class PryceClient
         }
 
         $result = json_decode($responseContent["body"]);
-        return $result[0]->selling_price;
+        return $result->data[0]->selling_price;
     }
 
     private static function build_payload($price, $product, $affiliate)
@@ -38,7 +38,7 @@ class PryceClient
                     "sku" => $product->get_sku(),
                     "price" => $price,
                     "categories" => array_values($categories),
-                    "affiliate" => $affiliate
+                    "affiliate" => !$affiliate ? "" : $affiliate
                 ]
             ]
         ];
@@ -61,15 +61,14 @@ class PryceClient
     private static function has_response_error($response, $requestContent)
     {
         $encodedRequest = json_encode($requestContent);
-        $errorMessage = "[pryce.app] could not get price, error: " . json_encode($response['body']) . " request: " . $encodedRequest;
 
         if (is_wp_error($response) || !is_array($response)) {
-            error_log($errorMessage);
+            error_log("[pryce.app] could not get pryce, error: " . json_encode($response));
             return true;
         }
 
         if ($response["http_response"]->get_status() !== 200) {
-            error_log($errorMessage);
+            error_log("[pryce.app] could not get pryce, error: " . json_encode($response["body"]));
             return true;
         }
 
