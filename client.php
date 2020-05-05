@@ -16,7 +16,7 @@ class PryceClient
         $responseContent = self::do_request($requestContent, self::$requestToken);
 
         if (self::has_response_error($responseContent, $responseContent)) {
-            return $price;
+            return false;
         }
 
         $result = json_decode($responseContent["body"]);

@@ -3,7 +3,7 @@
 Plugin Name: Pryce.app
 Plugin URI: https://github.com/pryceapp/wc-price-app
 Description: Pryce.app integration
-Version: 0.1
+Version: 0.1.0
 Author: Pryce.app
 Author URI: https://pryce.app/
 License: GPLv2 or later
@@ -64,7 +64,12 @@ function wc_pryce_app_integration($price, $product)
 
     $pryceClient = new PryceClient($requestToken);
 
-    return $pryceClient->get_quotation($price, $product, $affiliate);
+    $quotatedPrice = $pryceClient->get_quotation($price, $product, $affiliate);
+    if (!$quotatedPrice) {
+        return $price;
+    }
+
+    return $quotatedPrice;
 }
 add_filter('woocommerce_product_get_price', 'wc_pryce_app_integration', 10, 2);
 
