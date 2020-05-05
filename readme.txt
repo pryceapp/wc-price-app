@@ -1,9 +1,9 @@
 === Pryce.app Integration ===
 
-Tags: descontos, cupons
+Tags: descontos, cupons, promotions
 Requires at least: 5.1
 Tested up to: 5.2
-Requires PHP: 7.0
+Requires PHP: 5.6
 Stable tag: 0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -35,8 +35,8 @@ Crie suas campanhas de desconto na nossa plataforma e aproveite!
 
 = 0.1.0 =
 
-* Discount by category
-* Discount by affiliates (utm_source)
+* Descontos por categoria
+* Descontos por afiliados (utm_source)
 
 == Screenshots ==
  
