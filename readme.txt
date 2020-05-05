@@ -1,4 +1,4 @@
-=== Pryce.app Integration ===
+=== Pryce.app - Descontos avançados ===
 
 Tags: descontos, cupons, promotions
 Requires at least: 5.1
