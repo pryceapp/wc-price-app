@@ -15,7 +15,7 @@ require 'helpers.php';
 require 'cookie.php';
 require 'client.php';
 
-function add_token_configuration_start_setting($settings)
+function pryceapp_add_token_configuration_start_setting($settings)
 {
 
     $updated_settings = [];
@@ -44,9 +44,9 @@ function add_token_configuration_start_setting($settings)
 
     return $updated_settings;
 }
-add_filter('woocommerce_general_settings', 'add_token_configuration_start_setting');
+add_filter('woocommerce_general_settings', 'pryceapp_add_token_configuration_start_setting');
 
-function wc_pryce_app_integration($price, $product)
+function pryceapp_price_integration($price, $product)
 {
 
     $requestToken = get_option('wc_pryce_app_token', 1);
@@ -60,9 +60,9 @@ function wc_pryce_app_integration($price, $product)
         return $price;
     }
 
-    $affiliate = GenericCookieHandler::getInstance()->get();
+    $affiliate = PryceAPPGenericCookieHandler::getInstance()->get();
 
-    $pryceClient = new PryceClient($requestToken);
+    $pryceClient = new PryceAPPClient($requestToken);
 
     $quotatedPrice = $pryceClient->get_quotation($price, $product, $affiliate);
     if (!$quotatedPrice) {
@@ -71,14 +71,14 @@ function wc_pryce_app_integration($price, $product)
 
     return $quotatedPrice;
 }
-add_filter('woocommerce_product_get_price', 'wc_pryce_app_integration', 10, 2);
+add_filter('woocommerce_product_get_price', 'pryceapp_price_integration', 10, 2);
 
 add_action('init', function () {
-    $utm_source = get_request_parameter(
-        GenericCookieHandler::DEFAULT_AFFILIATE_IDENTIFIER
+    $utm_source = pryceapp_get_request_parameter(
+        PryceAPPGenericCookieHandler::DEFAULT_AFFILIATE_IDENTIFIER
     );
     if (!empty($utm_source)) {
-        $cookieHandler = GenericCookieHandler::getInstance();
+        $cookieHandler = PryceAPPGenericCookieHandler::getInstance();
         $cookieHandler->set(
             $utm_source,
             strtotime('+20 minutes')

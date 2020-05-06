@@ -1,6 +1,6 @@
 <?php
 
-function get_request_parameter($key, $default = '')
+function pryceapp_get_request_parameter($key, $default = '')
 {
     if (!isset($_REQUEST[$key]) || empty($_REQUEST[$key])) {
         return $default;

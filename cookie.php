@@ -9,7 +9,7 @@
  * to hold temporarely the value that was set on the cookie until
  * the client refresh his page.
  */
-class GenericCookieHandler
+class PryceAPPGenericCookieHandler
 {
     const DEFAULT_COOKIE_KEY = 'PRYCE_AFFILIATE';
     const DEFAULT_AFFILIATE_IDENTIFIER = 'utm_source';

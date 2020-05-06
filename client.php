@@ -1,6 +1,6 @@
 <?php
 
-class PryceClient
+class PryceAPPClient
 {
     const ENDPOINT = "https://pryce.app/api/quotation/";
     private static $requestToken;
