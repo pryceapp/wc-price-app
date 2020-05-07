@@ -2,7 +2,7 @@
 
 class PryceAPPClient
 {
-    const ENDPOINT = "https://pryce.app/api/quotation/";
+    const ENDPOINT = "https://pryce.app/api/v1/quotation/";
     private static $requestToken;
 
     public function __construct($requestToken)
