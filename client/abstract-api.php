@@ -30,7 +30,7 @@ abstract class AbstractApi
      */
     public function __construct($token)
     {
-        $this->header = [
+        $this->headers = [
             'Authorization' => 'Token ' . $token,
             'Content-Type' => 'application/json'
         ];
