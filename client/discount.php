@@ -17,7 +17,7 @@ class Discount extends AbstractApi
                 $this->endpoint,
                 http_build_query($filters)
             ),
-            ['headers' => $this->headers]
+            $this->headers
         );
 
         $discounts = json_decode($discounts['body']);
@@ -37,14 +37,14 @@ class Discount extends AbstractApi
      */
     public function getByCode($code)
     {
-        $customer = wp_remote_get(
+        $discount = wp_remote_get(
             sprintf('%s/benefits/%s', $this->endpoint, $code),
-            $this->header
+            $this->headers
         );
 
-        $customer = json_decode($customer);
+        $discount = json_decode($discount['body']);
 
-        return new DiscountEntity($customer);
+        return new DiscountEntity($discount);
     }
     /**
      * Create new customer

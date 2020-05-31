@@ -15,7 +15,7 @@
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 <div class="wrap">
-    <h1 class="wp-heading-inline"><?= __('Discounts'); ?></h1>
+    <h1 class="wp-heading-inline"><?= __('Discounts', 'pryceapp'); ?></h1>
     <a href="#!" class="page-title-action"><?= __('Adicionar novo'); ?></a>
     <hr class="wp-header-end">
     <table class="wp-list-table widefat fixed striped posts">
@@ -57,21 +57,21 @@
                     </th>
                     <td class="name column-name has-row-actions column-primary" data-colname="Nome">
                         <strong>
-                            <a class="row-title" href="#">
+                            <a class="row-title" href="https://www.pryce.app/benefits/" target="_blank">
                                 <?= $discount->name ?>
                             </a>
                         </strong>
                         <div class="row-actions">
                             <span class="edit">
-                                <a href="#!" aria-label=""><?= __('Editar') ?></a> |
+                                <a href="https://www.pryce.app/benefits/" target="_blank"><?= __('Editar') ?></a> |
                             </span>
                             <span class="trash">
-                                <a href="#!" class="submitdelete" aria-label="">
+                                <a href="https://www.pryce.app/benefits/" class="submitdelete" target="_blank">
                                     <?= __('Lixeira') ?>
                                 </a> |
                             </span>
                             <span class="view">
-                                <a href="#1" rel="bookmark" aria-label="">
+                                <a href="https://www.pryce.app/benefits/" rel="bookmark" target="_blank">
                                     <?= __('Desativar') ?>
                                 </a>
                             </span>
