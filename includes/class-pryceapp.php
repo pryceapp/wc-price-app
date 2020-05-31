@@ -172,13 +172,30 @@ class Pryceapp
 
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
+
+		/**
+		 * Adds warning on "products" related page to warning user that the plugin is enabled
+		 */
 		$this->loader->add_action('admin_notices', $plugin_admin, 'add_warning_of_activated_plugin');
-		$this->loader->add_action('admin_menu', $plugin_admin, 'add_submenu_page');
+
+		/**
+		 * Adds token input on woocommerce settings
+		 */
 		$this->loader->add_action(
 			'woocommerce_general_settings',
 			$plugin_admin,
 			'add_token_configuration_start_settings'
 		);
+
+		/**
+		 * Adds menu option under "product" section on admin panel
+		 */
+		$this->loader->add_action('admin_menu', $plugin_admin, 'add_submenu_page');
+
+		/**
+		 * Adds page to see discount on a form
+		 */
+		$this->loader->add_action('admin_menu', $plugin_admin, 'load_discount_page');
 	}
 
 	/**

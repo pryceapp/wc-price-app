@@ -13,7 +13,7 @@ class Quotation extends AbstractApi
     {
         $quotation = wp_remote_post(
             sprintf('%s/quotation/', $this->endpoint),
-            ['body' => json_encode(['data' => [$data]]), 'headers' => $this->header]
+            ['body' => json_encode(['data' => [$data]]), 'headers' => $this->headers]
         );
 
         if ($this->hasResponseError($quotation)) {

@@ -21,22 +21,24 @@ final class DiscountEntity extends AbstractEntity
     /**
      * @var bool
      */
-    public $isActive;
+    public $is_active;
 
     /**
      * @var bool
      */
-    public $isCumulative;
+    public $is_cumulative;
 
     /**
      * @var date
      */
-    public $startAt;
+    public $start_at;
 
     /**
      * @var date
      */
-    public $endAt;
+    public $end_at;
+
+    public $created_at;
 
     /**
      * @var array[string]
@@ -46,12 +48,12 @@ final class DiscountEntity extends AbstractEntity
     /**
      * @var float
      */
-    public $maxPrice;
+    public $max_price;
 
     /**
      * @var float
      */
-    public $minPrice;
+    public $min_price;
 
     /**
      * @var array[string]
@@ -66,12 +68,12 @@ final class DiscountEntity extends AbstractEntity
     /**
      * @var float
      */
-    public $discountValue;
+    public $discount_value;
 
     /**
      * @var string
      */
-    public $discountType;
+    public $discount_type;
 
     /**
      * @var array[string]

@@ -11,22 +11,22 @@ class Discount extends AbstractApi
      */
     public function getAll(array $filters = [])
     {
-        $customers = wp_remote_get(
+        $discounts = wp_remote_get(
             sprintf(
                 '%s/benefits/?%s',
                 $this->endpoint,
                 http_build_query($filters)
             ),
-            $this->header
+            $this->headers
         );
 
-        $customers = json_decode($customers);
+        $discounts = json_decode($discounts['body']);
 
-        $this->extractMeta($customers);
+        $this->extractMeta($discounts);
 
         return array_map(function ($customer) {
             return new DiscountEntity($customer);
-        }, $customers->data);
+        }, $discounts->results);
     }
 
     /**
@@ -37,14 +37,14 @@ class Discount extends AbstractApi
      */
     public function getByCode($code)
     {
-        $customer = wp_remote_get(
+        $discount = wp_remote_get(
             sprintf('%s/benefits/%s', $this->endpoint, $code),
-            $this->header
+            $this->headers
         );
 
-        $customer = json_decode($customer);
+        $discount = json_decode($discount['body']);
 
-        return new DiscountEntity($customer);
+        return new DiscountEntity($discount);
     }
     /**
      * Create new customer

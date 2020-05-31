@@ -157,6 +157,10 @@ class Pryceapp_Admin
 		return $updated_settings;
 	}
 
+	/**
+	 * This function adds a submenu under "Products" menu
+	 * on admin panel.
+	 */
 	public function add_submenu_page()
 	{
 		add_submenu_page(
@@ -169,10 +173,37 @@ class Pryceapp_Admin
 		);
 	}
 
+	/**
+	 * This function display all available discounts on a table.
+	 */
 	public function display_options_page()
 	{
 		$discounts = $this->client->discounts()->getAll();
 
 		require_once 'partials/pryceapp-admin-display.php';
+	}
+
+	/**
+	 * This function display a page to edit a discount
+	 */
+	public function load_discount_page()
+	{
+		add_submenu_page(
+			null,
+			__('Edit discount', $this->plugin_name),
+			__('Edit discount', $this->plugin_name),
+			'manage_woocommerce',
+			$this->plugin_name . '_edit_discount',
+			array($this, 'display_option_edit_discount_page')
+		);
+	}
+
+	public function display_option_edit_discount_page()
+	{
+		$code = $_GET['code'];  // This is not right !!!
+
+		$discount = $this->client->discounts()->getByCode($code);
+
+		require_once 'partials/pryceapp-admin-edit.php';
 	}
 }
